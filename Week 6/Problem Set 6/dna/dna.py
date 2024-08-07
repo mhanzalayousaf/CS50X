@@ -3,47 +3,47 @@ import sys
 
 
 def main():
-    # Check for command-line usage
-    if len(sys.argv) != 3 or not (
-        sys.argv[1].endswith(".csv") and sys.argv[2].endswith(".txt")
-    ):
-        print("Usage: python dna.py database.csv sequences.txt")
-        sys.exit(1)
+    # Checking for command-line usage
+    if not (len(sys.argv) == 3 and sys.argv[1].endswith(".csv") and sys.argv[2].endswith(".txt")):
+        sys.exit("Usage: python dna.py database.csv sequences.txt")
 
-    # Read database file into a variable
-    database = []
-    with open(sys.argv[1], "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            database.append(row)
+    # Reading database file into a list of dicts
+    database = list()
+    try:
+        with open(sys.argv[1], "r") as file:
+            reader = csv.DictReader(file)
+            subsequences = reader.fieldnames[1:]
+            for row in reader:
+                database.append(row)
+    except FileNotFoundError:
+        sys.exit(f"File not found: {sys.argv[1]}")
 
-    # Read DNA sequence file into a variable
-    with open(sys.argv[2], "r") as file:
-        dna_sequence = file.read()
+    # Reading DNA sequence file into a variable
+    try:
+        with open(sys.argv[2], "r") as file:
+            sequence = file.read()
+    except FileNotFoundError:
+        sys.exit(f"File not found: {sys.argv[2]}")
 
-    # List of subsequences to check
-    subsequences = list(database[0].keys())[1:]
-
-    # Find longest match of each STR in DNA sequence
-    result = {}
+    # Finding the longest match of each STR in DNA sequence
+    subsequences_lengths = dict()
     for subsequence in subsequences:
-        result[subsequence] = longest_match(dna_sequence, subsequence)
+        subsequences_lengths[subsequence] = longest_match(sequence, subsequence)
 
-    # Check database for matching profiles
+    # Checking database for matching profiles
     for person in database:
-        match = 0
-        for subsequence in subsequences:
-            if int(person[subsequence]) == result[subsequence]:
-                match += 1
-
-        # If all subsequences matched
-        if match == len(subsequences):
+        person_subsequences_lengths = dict()
+        for key in person:
+            if key != "name":
+                person_subsequences_lengths[key] = int(person[key])
+        if person_subsequences_lengths == subsequences_lengths:
             print(person["name"])
-            sys.exit(0)
+            break
+    else:
+        # Printing no match if no match is found
+        print("No match")
 
-    # If no match is found
-    print("No match")
-    sys.exit(0)
+    return
 
 
 def longest_match(sequence, subsequence):
