@@ -2,23 +2,19 @@ from cs50 import get_int
 
 
 def main():
-    # Prompt the user for the pyramid's height
-    height = get_int("Height: ")
-    while height < 1 or height > 8:
+    while True:
         height = get_int("Height: ")
+        if 0 < height < 9:
+            break
 
-    # Print a pyramid of that height
-    print_pyramid(height)
+    pyramid(height)
 
 
-def print_pyramid(n):
-    """Print a pyramid of given height."""
-    for i in range(1, n + 1):
-        # Print spaces
-        print(" " * (n - i), end="")
-
-        # Print bricks
-        print("#" * i)
+def pyramid(n):
+    s = n - 1
+    for i in range(n):
+        print(' ' * s, '#' * (i + 1), sep='')
+        s -= 1
 
 
 if __name__ == "__main__":
