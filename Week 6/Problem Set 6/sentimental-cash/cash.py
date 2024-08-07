@@ -2,28 +2,54 @@ from cs50 import get_float
 
 
 def main():
-    # Prompt the user for the amount of change owed
-    dollars = get_float("Change: ")
-    while dollars < 0:
-        dollars = get_float("Change: ")
+    while True:
+        change = get_float("Change: ")*100
+        if change > 0:
+            break
 
-    # Convert dollars to cents
-    cents = round(dollars * 100)
+    quarters = calculate_quarters(change)
+    change -= (quarters * 25)
+    dimmes = calculate_dimmes(change)
+    change -= (dimmes * 10)
+    nickles = calculate_nickles(change)
+    change -= (nickles * 5)
+    pennies = calculate_pennies(change)
+    change -= pennies
 
-    # Print the total number of coins
-    print(calculate_coins(cents))
+    counts = quarters + dimmes + nickles + pennies
+    print(counts)
 
 
-def calculate_coins(cents):
-    """Calculate the total number of coins needed."""
+def calculate_quarters(cents):
+    quarters = 0
+    while cents >= 25:
+        quarters += 1
+        cents -= 25
+    return quarters
 
-    quarters = cents // 25
-    dimes = (cents % 25) // 10
-    nickels = ((cents % 25) % 10) // 5
-    pennies = ((cents % 25) % 10) % 5
 
-    total_coins = quarters + dimes + nickels + pennies
-    return total_coins
+def calculate_dimmes(cents):
+    dimmes = 0
+    while cents >= 10:
+        dimmes += 1
+        cents -= 10
+    return dimmes
+
+
+def calculate_nickles(cents):
+    nickles = 0
+    while cents >= 5:
+        nickles += 1
+        cents -= 5
+    return nickles
+
+
+def calculate_pennies(cents):
+    pennies = 0
+    while cents >= 1:
+        pennies += 1
+        cents -= 1
+    return pennies
 
 
 if __name__ == "__main__":
